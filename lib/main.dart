@@ -1,164 +1,140 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: WelcomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
+class WelcomePage extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _WelcomePageState createState() => _WelcomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _WelcomePageState extends State<WelcomePage> {
+  int _currentIndex = 0;
+  final List<String> imageUrls = [
+    'asset/img_1.png',
+    'asset/img_2.png',
+    'asset/img_3.png',
+    // Thêm các URL ảnh khác vào đây
+  ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  CarouselController _carouselController = CarouselController();
+
+  void _goToPreviousSlide() {
+    _carouselController.previousPage();
   }
-  int _selectedIndex = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void _goToNextSlide() {
+    _carouselController.nextPage();
+  }
+
+  void _handleContinue() {
+    // Điều hướng đến trang đăng nhập sau khi nhấn nút tiếp tục
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()), // Thay thế LoginPage() bằng trang đăng nhập của bạn
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          // Phần slide ảnh
+          Expanded(
+            child: CarouselSlider(
+              items: imageUrls.map((imageUrl) {
+                return Image.asset(imageUrl);
+              }).toList(),
+              carouselController: _carouselController,
+              options: CarouselOptions(
+                height: 300.0,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+              ),
+            ),
+          ),
+
+          // Phần nút "Tiếp tục"
+          ElevatedButton(
+            onPressed: _handleContinue,
+            child: Text('Tiếp tục'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  void _handleLogin() {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
+
+    // Thực hiện xử lý đăng nhập ở đây, ví dụ:
+    if (username == 'admin' && password == 'password') {
+      // Đăng nhập thành công, chuyển đến trang khác hoặc thực hiện các hành động cần thiết
+      // Ví dụ: Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+      print('Đăng nhập thành công');
+    } else {
+      // Đăng nhập thất bại, hiển thị thông báo lỗi hoặc thực hiện các hành động cần thiết
+      print('Đăng nhập thất bại');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(Icons.home),
-        title: const Text('home page'),
-        actions: const <Widget>[
-          Icon(Icons.search),
-          Icon(Icons.add),
-          Icon(Icons.alarm),
-        ],
-
+        title: Text('Đăng nhập'),
       ),
-
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              child: Row(
-                children: [
-                  Column(
-                    children: [
-                      Container(
-                          margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                          child: const Text('Strawberry Pavlova', textAlign: TextAlign.center,  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),)
-
-                      ),
-                      Container(
-                          width: 170,
-                          child: const Text('Pavlova is a mering-base dessert named after the Russian ballerine Anna Pavlova is a mering-base dessert named after the Russian ballerine Anna Pavlova is ', textAlign: TextAlign.center, )
-                      ),
-                      Container(
-                        child: Row(
-                          children: [
-                            Icon(Icons.star, color: Color(0xFF67717B)),
-                            Icon(Icons.star, color: Color(0xFF67717B)),
-                            Icon(Icons.star, color: Color(0xFF67717B)),
-                            Icon(Icons.star, color: Color(0xFF67717B)),
-                            Icon(Icons.star, color: Color(0xFF67717B)),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Column(
-                                children: [
-                                  Icon(Icons.kitchen, color: Color(0xFF67CFAB)),
-                                  const Text('PREP:'),
-                                  const Text('25 min'),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Icon(Icons.timer, color: Color(0xFF67CFAB)),
-                                  const Text('COOK:'),
-                                  const Text('1 hr'),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Icon(Icons.restaurant, color: Color(0xFF67CFAB)),
-                                  const Text('FEEDS:'),
-                                  const Text('4-6'),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  Column(
-                    children: <Widget>[
-                      Image.asset(
-                        'asset/img_6.png' ,
-                        width: 150,
-
-                      ),
-                      // Image.asset
-                    ],
-                  )
-                ],
-
-
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: _usernameController,
+              decoration: InputDecoration(
+                labelText: 'Tên người dùng',
+                hintText: 'Nhập tên người dùng',
               ),
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Trang 1',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Trang 2',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'Trang 3',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Mật khẩu',
+                hintText: 'Nhập mật khẩu',
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _handleLogin,
+              child: Text('Đăng nhập'),
+            ),
+          ],
+        ),
       ),
     );
   }
